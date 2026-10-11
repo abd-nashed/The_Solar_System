@@ -83,7 +83,7 @@ function ModelLoader({ planet, onSelect, isMoon = false }) {
     });
 
     return clone;
-  }, [gltf, planet, isMoon]);
+  }, [gltf, planet.color, planet.isSun, isMoon]);
 
   useFrame((_, delta) => {
     if (localRef.current && planet.rotationSpeed) {
@@ -115,10 +115,6 @@ function ModelLoader({ planet, onSelect, isMoon = false }) {
 
 export function CelestialBody({ planet, onSelect, isActive = false, isMoon = false }) {
   const fallback = <FallbackSphere planet={planet} onSelect={onSelect} isMoon={isMoon} />;
-
-  if (isMoon) {
-    return fallback;
-  }
 
   if (!planet.model) {
     return fallback;

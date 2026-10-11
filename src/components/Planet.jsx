@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CelestialBody } from './CelestialBody';
@@ -6,6 +6,12 @@ import { CelestialBody } from './CelestialBody';
 export function Planet({ planet, onSelect, isActive, planetRefs }) {
   const orbitRef = useRef();
   const moonOrbitRefs = useRef([]);
+  const moonOrbitRotations = useMemo(
+    () => (planet.moons || []).map((_, index) => (
+      (index * Math.PI * 2) / (planet.moons.length || 1)
+    )),
+    [planet.moons]
+  );
 
   useFrame((_, delta) => {
     if (orbitRef.current && planet.speed) {
@@ -14,7 +20,7 @@ export function Planet({ planet, onSelect, isActive, planetRefs }) {
 
     moonOrbitRefs.current.forEach((ref, i) => {
       if (ref && planet.moons && planet.moons[i]) {
-        ref.rotation.y += delta * planet.moons[i].speed * 0.4;
+        ref.rotation.y += delta * planet.moons[i].speed * 0.08;
       }
     });
   });
@@ -54,7 +60,7 @@ export function Planet({ planet, onSelect, isActive, planetRefs }) {
             <group
               key={moon.name}
               ref={(el) => (moonOrbitRefs.current[i] = el)}
-              rotation={[0, Math.random() * Math.PI * 2, 0]}
+              rotation={[0, moonOrbitRotations[i], 0]}
             >
               <mesh rotation={[-Math.PI / 2, 0, 0]}>
                 <ringGeometry args={[moon.distance - 0.005, moon.distance + 0.005, 32]} />
